@@ -12,6 +12,7 @@ public class ShapeGenerator
 
     public Vector3 CalculatePointOnPlanet(Vector3 pointOnUnitSphere)
     {
+        pointOnUnitSphere.Normalize();
         return pointOnUnitSphere * settings.planetRadius;
     }
 }

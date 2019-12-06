@@ -4,29 +4,26 @@ using UnityEngine;
 
 public class TerrainFaceTriangle
 {
+    ShapeGenerator shapeGenerator;
     Mesh mesh;
     int resolution;
     Vector3 localUp;
     Vector3 axisA;
     Vector3 axisB;
-    float scale;
 
-    public TerrainFaceTriangle(Mesh mesh, int resolution, float scale)
+    public TerrainFaceTriangle(ShapeGenerator shapeGenerator, Mesh mesh, int resolution)
     {
+        this.shapeGenerator = shapeGenerator;
         this.mesh = mesh;
         this.resolution = resolution;
-        this.scale = scale;
     }
 
 
     public void ConstructMesh(Vector3 vert1, Vector3 vert2, Vector3 vert3)
     {
-        vert1.Normalize();
-        vert1 *= scale;
-        vert2.Normalize();
-        vert2 *= scale;
-        vert3.Normalize();
-        vert3 *= scale;
+        vert1 = shapeGenerator.CalculatePointOnPlanet(vert1);
+        vert2 = shapeGenerator.CalculatePointOnPlanet(vert2);
+        vert3 = shapeGenerator.CalculatePointOnPlanet(vert3);
         List<Vector3> vertices = new List<Vector3> { vert1, vert2, vert3 };
         List<Vector3Int> triangles = new List<Vector3Int> { new Vector3Int(0, 1, 2) };  //initial triangle
 
@@ -45,14 +42,11 @@ public class TerrainFaceTriangle
             foreach (var tri in triangles)
             {
                 var vertXY = FindMiddlePoint(vertices[tri.x], vertices[tri.y]);
-                vertXY.Normalize();
-                vertXY *= scale;
+                vertXY = shapeGenerator.CalculatePointOnPlanet(vertXY);
                 var vertXZ = FindMiddlePoint(vertices[tri.x], vertices[tri.z]);
-                vertXZ.Normalize();
-                vertXZ *= scale;
+                vertXZ = shapeGenerator.CalculatePointOnPlanet(vertXZ);
                 var vertYZ = FindMiddlePoint(vertices[tri.y], vertices[tri.z]);
-                vertYZ.Normalize();
-                vertYZ *= scale;
+                vertYZ = shapeGenerator.CalculatePointOnPlanet(vertYZ);
 
                 if (!vertices.Contains(vertXY))
                     vertices.Add(vertXY);

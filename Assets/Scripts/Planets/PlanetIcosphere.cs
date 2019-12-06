@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,7 +7,17 @@ public class PlanetIcosphere : MonoBehaviour
 {
     [Range(1, 8)]
     public int resolution = 1;
-    public float scale = 1;
+    public bool autoUpdate = true;
+
+    public ShapeSettings shapeSettings;
+    public ColorSettings colorSettings;
+
+    [HideInInspector]
+    public bool shapeSettingFoldout;
+    [HideInInspector]
+    public bool colorSettingFoldout;
+
+    ShapeGenerator shapeGenerator;
 
     [SerializeField, HideInInspector]
     MeshFilter[] meshFilters;
@@ -14,12 +25,12 @@ public class PlanetIcosphere : MonoBehaviour
 
     private void OnValidate()
     {
-        Initialize();
-        GenerateMesh();
+        GeneratePlanet();
     }
 
     void Initialize()
     {
+        shapeGenerator = new ShapeGenerator(shapeSettings);
         if (meshFilters == null || meshFilters.Length == 0)
         {
             meshFilters = new MeshFilter[20];
@@ -39,7 +50,29 @@ public class PlanetIcosphere : MonoBehaviour
                 meshFilters[i].sharedMesh = new Mesh();
             }
 
-            terrainFaces[i] = new TerrainFaceTriangle(meshFilters[i].sharedMesh, resolution, scale);
+            terrainFaces[i] = new TerrainFaceTriangle(shapeGenerator, meshFilters[i].sharedMesh, resolution);
+        }
+    }
+    public void GeneratePlanet()
+    {
+        Initialize();
+        GenerateMesh();
+        GenerateColors();
+    }
+    public void OnShapeSettingsUpdated()
+    {
+        if (autoUpdate)
+        {
+            Initialize();
+            GenerateMesh();
+        }
+    }
+    public void OnColorSettingsUpdated()
+    {
+        if (autoUpdate)
+        {
+            Initialize();
+            GenerateColors();
         }
     }
 
@@ -57,7 +90,7 @@ public class PlanetIcosphere : MonoBehaviour
         icoVertices.Add(new Vector3(0, 1, t));
         icoVertices.Add(new Vector3(0, -1, -t));
         icoVertices.Add(new Vector3(0, 1, -t));
-        
+
         icoVertices.Add(new Vector3(t, 0, -1));
         icoVertices.Add(new Vector3(t, 0, 1));
         icoVertices.Add(new Vector3(-t, 0, -1));
@@ -87,5 +120,12 @@ public class PlanetIcosphere : MonoBehaviour
         terrainFaces[18].ConstructMesh(icoVertices[8], icoVertices[6], icoVertices[7]);
         terrainFaces[19].ConstructMesh(icoVertices[9], icoVertices[8], icoVertices[1]);
 
+    }
+    void GenerateColors()
+    {
+        foreach (var m in meshFilters)
+        {
+            m.GetComponent<MeshRenderer>().sharedMaterial.color = colorSettings.planetColor;
+        }
     }
 }
