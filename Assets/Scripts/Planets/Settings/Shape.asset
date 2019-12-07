@@ -14,23 +14,66 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   planetRadius: 1
   noiseLayers:
+  - enabled: 0
+    useFirstLayerAsMask: 0
+    noiseSettings:
+      filterType: 0
+      simpleNoiseSettings:
+        strenght: 1
+        numLayers: 1
+        baseRoughtness: 1
+        roughness: 2
+        persistance: 0.5
+        centre: {x: 0, y: 0, z: 0}
+        minValue: 0
+      rigidNoiseSettings:
+        strenght: 1
+        numLayers: 1
+        baseRoughtness: 1
+        roughness: 2
+        persistance: 0.5
+        centre: {x: 0, y: 0, z: 0}
+        minValue: 0
+        weightMultiplier: 0.8
+  - enabled: 0
+    useFirstLayerAsMask: 1
+    noiseSettings:
+      filterType: 0
+      simpleNoiseSettings:
+        strenght: 1
+        numLayers: 1
+        baseRoughtness: 1
+        roughness: 2
+        persistance: 0.5
+        centre: {x: 0, y: 0, z: 0}
+        minValue: 0
+      rigidNoiseSettings:
+        strenght: 1
+        numLayers: 1
+        baseRoughtness: 1
+        roughness: 2
+        persistance: 0.5
+        centre: {x: 0, y: 0, z: 0}
+        minValue: 0
+        weightMultiplier: 0.8
   - enabled: 1
     useFirstLayerAsMask: 0
     noiseSettings:
-      strenght: 0.15
-      numLayers: 4
-      baseRoughtness: 0.55
-      roughness: 2.34
-      persistance: 0.54
-      centre: {x: 0, y: 0, z: 0}
-      minValue: 1
-  - enabled: 1
-    useFirstLayerAsMask: 1
-    noiseSettings:
-      strenght: 0.2
-      numLayers: 5
-      baseRoughtness: 1
-      roughness: 2
-      persistance: 0.94
-      centre: {x: 0, y: 0, z: 0}
-      minValue: 2.61
+      filterType: 1
+      simpleNoiseSettings:
+        strenght: 1
+        numLayers: 1
+        baseRoughtness: 1
+        roughness: 2
+        persistance: 0.5
+        centre: {x: 0, y: 0, z: 0}
+        minValue: 0
+      rigidNoiseSettings:
+        strenght: 0.96
+        numLayers: 1
+        baseRoughtness: 1
+        roughness: 2
+        persistance: 0.5
+        centre: {x: 0, y: 0, z: 0}
+        minValue: 0
+        weightMultiplier: 0.8
