@@ -18,7 +18,6 @@ public class TerrainFaceTriangle
         this.resolution = resolution;
     }
 
-
     public void ConstructMesh(Vector3 vert1, Vector3 vert2, Vector3 vert3)
     {
         vert1 = shapeGenerator.CalculatePointOnPlanet(vert1);
@@ -27,13 +26,13 @@ public class TerrainFaceTriangle
         List<Vector3> vertices = new List<Vector3> { vert1, vert2, vert3 };
         List<Vector3Int> triangles = new List<Vector3Int> { new Vector3Int(0, 1, 2) };  //initial triangle
 
-        //Calculate Normal
+        /*//Calculate Normal
         var side1 = vert1 - vert2;
         var side2 = vert1 - vert3;
         localUp = Vector3.Cross(side1, side2);
 
         axisA = new Vector3(localUp.y, localUp.z, localUp.x);
-        axisB = Vector3.Cross(localUp, axisA);
+        axisB = Vector3.Cross(localUp, axisA);*/
 
         // Divide the triangles
         for (int i = 1; i < resolution; i++)
