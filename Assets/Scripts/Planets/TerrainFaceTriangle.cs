@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class TerrainFaceTriangle
@@ -20,63 +21,63 @@ public class TerrainFaceTriangle
 
     public void ConstructMesh(Vector3 vert1, Vector3 vert2, Vector3 vert3)
     {
-        vert1 = shapeGenerator.CalculatePointOnPlanet(vert1);
-        vert2 = shapeGenerator.CalculatePointOnPlanet(vert2);
-        vert3 = shapeGenerator.CalculatePointOnPlanet(vert3);
-        List<Vector3> vertices = new List<Vector3> { vert1, vert2, vert3 };
-        List<Vector3Int> triangles = new List<Vector3Int> { new Vector3Int(0, 1, 2) };  //initial triangle
+        int vertexIndex = 0;
+        Dictionary<Vector3, int> vertices = new Dictionary<Vector3, int> { { vert1, vertexIndex++ } };
+        List<Vector3Int> triangles = new List<Vector3Int>();
 
-        /*//Calculate Normal
-        var side1 = vert1 - vert2;
-        var side2 = vert1 - vert3;
-        localUp = Vector3.Cross(side1, side2);
+        int triangleCountAux = 1;   //number of vertex on the row.
+        int vertexCountAux = 1;     //number of vertex on the lower limit of the row - 1.
 
-        axisA = new Vector3(localUp.y, localUp.z, localUp.x);
-        axisB = Vector3.Cross(localUp, axisA);*/
+        List<Vector3> topRowVectices = new List<Vector3> { vert1 };
+        List<Vector3> bottomRowVertices = new List<Vector3>();
 
-        // Divide the triangles
-        for (int i = 1; i < resolution; i++)
+        for (int row = 1; row <= resolution; row++)
         {
-            List<Vector3Int> trianglesAux = new List<Vector3Int>();
-            foreach (var tri in triangles)
+            Vector3 leftVert = FindPerCentPoint(vert1, vert3, 1.0f / resolution * row);
+            Vector3 rightVert = FindPerCentPoint(vert1, vert2, 1.0f / resolution * row);
+
+            for (int i = 0; i <= vertexCountAux; i++)
             {
-                var vertXY = FindMiddlePoint(vertices[tri.x], vertices[tri.y]);
-                vertXY = shapeGenerator.CalculatePointOnPlanet(vertXY);
-                var vertXZ = FindMiddlePoint(vertices[tri.x], vertices[tri.z]);
-                vertXZ = shapeGenerator.CalculatePointOnPlanet(vertXZ);
-                var vertYZ = FindMiddlePoint(vertices[tri.y], vertices[tri.z]);
-                vertYZ = shapeGenerator.CalculatePointOnPlanet(vertYZ);
-
-                if (!vertices.Contains(vertXY))
-                    vertices.Add(vertXY);
-                if (!vertices.Contains(vertXZ))
-                    vertices.Add(vertXZ);
-                if (!vertices.Contains(vertYZ))
-                    vertices.Add(vertYZ);
-
-                var indexXY = vertices.IndexOf(vertXY);
-                var indexXZ = vertices.IndexOf(vertXZ);
-                var indexYZ = vertices.IndexOf(vertYZ);
-
-                trianglesAux.Add(new Vector3Int(tri.x, indexXY, indexXZ));
-                trianglesAux.Add(new Vector3Int(tri.y, indexYZ, indexXY));
-                trianglesAux.Add(new Vector3Int(tri.z, indexXZ, indexYZ));
-                trianglesAux.Add(new Vector3Int(indexXY, indexYZ, indexXZ));
+                bottomRowVertices.Add(FindPerCentPoint(leftVert, rightVert, ((float)i / (float)vertexCountAux)));
             }
-            triangles = trianglesAux;
+            foreach (var vertex in bottomRowVertices)
+            {
+                vertices.Add(vertex, vertexIndex++);
+            }
+
+            int pointingDownVertexCount = (int)(triangleCountAux / 2.0f);
+            int pointingUpVertexCount = pointingDownVertexCount + 1;
+
+            for (int upVertex = 0; upVertex < pointingUpVertexCount; upVertex++)
+            {
+                triangles.Add(new Vector3Int(vertices[topRowVectices[upVertex]], vertices[bottomRowVertices[upVertex + 1]], vertices[bottomRowVertices[upVertex]]));
+            }
+            for (int downVertex = 0; downVertex < pointingDownVertexCount; downVertex++)
+            {
+                triangles.Add(new Vector3Int(vertices[topRowVectices[downVertex]], vertices[topRowVectices[downVertex + 1]], vertices[bottomRowVertices[downVertex + 1]]));
+            }
+
+            topRowVectices = bottomRowVertices;
+            bottomRowVertices = new List<Vector3>();
+            triangleCountAux += 2;
+            vertexCountAux++;
         }
 
-        var finalVertices = vertices.ToArray();
-        int[] finalTriangles = new int[(int)Mathf.Pow(4, (resolution - 1)) * 3];
-        //int[] finalTriangles = new int[((resolution - 2) * (resolution - 2) + 2 * (resolution - 2) + 1) * 3];
+        var finalVertices = vertices.Keys.ToArray();
+        int[] finalTriangles = new int[resolution * resolution * 3];
 
-        int j = 0;
+        int triIndex = 0;
         foreach (var tri in triangles)
         {
-            finalTriangles[j] = tri.x;
-            finalTriangles[j + 1] = tri.y;
-            finalTriangles[j + 2] = tri.z;
-            j += 3;
+            finalTriangles[triIndex] = tri.x;
+            finalTriangles[triIndex + 1] = tri.y;
+            finalTriangles[triIndex + 2] = tri.z;
+            triIndex += 3;
+        }
+
+        for (int i = 0; i < finalVertices.Length; i++)
+        {
+            finalVertices[i] = shapeGenerator.CalculatePointOnPlanet(finalVertices[i]);
         }
 
         mesh.Clear();
@@ -85,11 +86,9 @@ public class TerrainFaceTriangle
         mesh.RecalculateNormals();
     }
 
-    private Vector3 FindMiddlePoint(Vector3 vert1, Vector3 vert2)
+    private Vector3 FindPerCentPoint(Vector3 vert1, Vector3 vert2, float percent)
     {
-        return new Vector3(
-            (vert1.x + vert2.x) / 2.0f,
-            (vert1.y + vert2.y) / 2.0f,
-            (vert1.z + vert2.z) / 2.0f);
+        Vector3 dir = (vert2 - vert1) * percent;
+        return vert1 + dir;
     }
 }

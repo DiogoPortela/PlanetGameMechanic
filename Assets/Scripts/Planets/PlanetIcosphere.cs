@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PlanetIcosphere : MonoBehaviour
 {
-    [Range(1, 8)]
+    [Range(1, 256)]
     public int resolution = 1;
     public bool autoUpdate = true;
     public enum FaceRenderMask { All, one }
