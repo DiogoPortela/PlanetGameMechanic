@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   planetRadius: 1
   noiseLayers:
-  - enabled: 0
+  - enabled: 1
     useFirstLayerAsMask: 0
     noiseSettings:
       filterType: 0
       simpleNoiseSettings:
-        strenght: 1
-        numLayers: 1
+        strenght: 0.1
+        numLayers: 3
         baseRoughtness: 1
         roughness: 2
         persistance: 0.5
@@ -56,7 +56,7 @@ MonoBehaviour:
         centre: {x: 0, y: 0, z: 0}
         minValue: 0
         weightMultiplier: 0.8
-  - enabled: 1
+  - enabled: 0
     useFirstLayerAsMask: 0
     noiseSettings:
       filterType: 1
@@ -70,7 +70,7 @@ MonoBehaviour:
         minValue: 0
       rigidNoiseSettings:
         strenght: 0.96
-        numLayers: 1
+        numLayers: 3
         baseRoughtness: 1
         roughness: 2
         persistance: 0.5
