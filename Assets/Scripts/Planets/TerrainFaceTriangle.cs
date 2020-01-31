@@ -19,6 +19,9 @@ public class TerrainFaceTriangle
         this.resolution = resolution;
     }
 
+    /// <summary>
+    /// Calculates all vertices and triangle indexes from a starting triangle. Does this dividing the triangle by the resolution value, and then calculates each triangle for each frow. Use the parameters to define the starting triangle.
+    /// </summary>   
     public void ConstructMesh(Vector3 vert1, Vector3 vert2, Vector3 vert3)
     {
         int vertexIndex = 0;
