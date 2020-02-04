@@ -16,7 +16,7 @@ public class PlanetPlaneMeshEditor : Editor
             base.OnInspectorGUI();
             if (check.changed)
             {
-                planet.Init();
+                planet.GeneratePlanet();
             }
         }
 

@@ -18,25 +18,37 @@ public class PlanetPlaneMesh : MonoBehaviour
     MeshFilter meshFilter;
     Mesh mesh;
     Vector3[] originalMeshShape;
+    Vector3 currentForward;
 
     private void OnValidate()
     {
-        Init();
+        GeneratePlanet();
+    }
+    private void Start()
+    {
+        GeneratePlanet();
     }
 
-    public void Init()
+    public void GeneratePlanet()
+    {
+        Init();
+        GenerateMesh();
+        RecalculateMesh();
+    }
+
+    private void Init()
     {
         shapeGenerator = new ShapeGenerator(shapeSettings);
-        GenerateMesh();
-        ProjectOntoPlanet();
-    }
 
-    private void GenerateMesh()
-    {
         if (meshFilter == null)
         {
-            meshFilter = this.gameObject.AddComponent<MeshFilter>();
-            this.gameObject.AddComponent<MeshRenderer>().sharedMaterial = new Material(Shader.Find("Standard"));
+            meshFilter = gameObject.GetComponent<MeshFilter>();
+            if (meshFilter == null)
+                meshFilter = this.gameObject.AddComponent<MeshFilter>();
+
+            if (gameObject.GetComponent<MeshRenderer>() == null)
+                this.gameObject.AddComponent<MeshRenderer>().sharedMaterial = new Material(Shader.Find("Standard"));
+
             mesh = new Mesh();
             meshFilter.sharedMesh = mesh;
         }
@@ -44,14 +56,16 @@ public class PlanetPlaneMesh : MonoBehaviour
         {
             mesh = meshFilter.sharedMesh;
         }
-
+    }
+    private void GenerateMesh()
+    {
         List<Vector3> vertices = new List<Vector3>();
         List<int> triangles = new List<int>();
 
         //Generate the mesh
         for (int x = 0; x < meshResolution; x++)
             for (int y = 0; y < meshResolution; y++)
-                vertices.Add(new Vector3((float)x / (meshResolution - 1) - 0.5f, (float)y / (meshResolution - 1) -0.5f));
+                vertices.Add(new Vector3((float)x / (meshResolution - 1) - 0.5f, (float)y / (meshResolution - 1) - 0.5f));
 
         for (int x = 0; x < meshResolution - 1; x++)
         {
@@ -71,8 +85,10 @@ public class PlanetPlaneMesh : MonoBehaviour
         //Deform the mesh into a hemisphere
         for (int i = 0; i < vertices.Count; i++)
         {
-            vertices[i] = new Vector3(vertices[i].x, vertices[i].y, (1 - Mathf.Pow(vertices[i].x, hemisphereDistorcionPower)) * (1 - Mathf.Pow(vertices[i].y, hemisphereDistorcionPower)) - 0.75f);
+            vertices[i] = new Vector3(vertices[i].x, vertices[i].y, (1 - Mathf.Pow(vertices[i].x, hemisphereDistorcionPower)) * (1 - Mathf.Pow(vertices[i].y, hemisphereDistorcionPower)));
         }
+
+        currentForward = Vector3.forward;
 
         mesh.Clear();
         originalMeshShape = vertices.ToArray();
@@ -80,22 +96,49 @@ public class PlanetPlaneMesh : MonoBehaviour
         mesh.triangles = triangles.ToArray();
 
     }
-    private void ProjectOntoPlanet()
+    public void RecalculateMesh()
     {
-        var vertices = originalMeshShape;
-
-        for (int i = 0; i < vertices.Length; i++)
-        {
-            vertices[i] = (vertices[i] + Vector3.forward * zValue).normalized;
-            vertices[i] = shapeGenerator.CalculatePointOnPlanet(vertices[i]);
-        }
+        var vertices = (Vector3[])originalMeshShape.Clone();
+        OffsetZ(ref vertices);
+        LookAtCamera(ref vertices);
+        ProjectOntoPlanetSurface(ref vertices);
 
         mesh.vertices = vertices;
         mesh.RecalculateNormals();
     }
+    private void OffsetZ(ref Vector3[] vertices)
+    {
+        for (int i = 0; i < vertices.Length; i++)
+        {
+            vertices[i] += new Vector3(0, 0, zValue - 0.75f);
+        }
+    }
+    private void LookAtCamera(ref Vector3[] vertices)
+    {
+        currentForward = (Camera.main.transform.position - this.transform.position).normalized;
+        var rotationMatrix = Matrix4x4.Rotate(Quaternion.LookRotation(currentForward, Vector3.up));
 
+        for (int i = 0; i < vertices.Length; i++)
+            vertices[i] = rotationMatrix.MultiplyPoint(vertices[i]);
+    }
+    private void ProjectOntoPlanetSurface(ref Vector3[] vertices)
+    {
+        for (int i = 0; i < vertices.Length; i++)
+        {
+            vertices[i] = (vertices[i] + currentForward * zValue).normalized;
+            vertices[i] = shapeGenerator.CalculatePointOnPlanet(vertices[i]);
+        }
+    }
+
+
+    public void Update()
+    {
+        RecalculateMesh();
+    }
+
+    /// Editor functions:
     public void OnShapeSettingsUpdated()
     {
-        Init();
+        GeneratePlanet();
     }
 }
