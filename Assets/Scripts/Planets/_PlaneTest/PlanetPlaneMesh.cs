@@ -9,6 +9,8 @@ public class PlanetPlaneMesh : MonoBehaviour
     public int hemisphereDistorcionPower = 4;
     [Range(0, 10)]
     public float zValue = 0.0f;
+    public float zMin = 0.0f;
+    public float zMax = 1.0f;
     public ShapeSettings shapeSettings;
 
     [HideInInspector]
@@ -28,7 +30,19 @@ public class PlanetPlaneMesh : MonoBehaviour
     {
         GeneratePlanet();
     }
+    public void Update()
+    {
+        RecalculateMesh();
+    }
 
+    // Editor functions:
+    public void OnShapeSettingsUpdated()
+    {
+        GeneratePlanet();
+    }
+
+
+    // Generation Code:
     public void GeneratePlanet()
     {
         Init();
@@ -108,6 +122,20 @@ public class PlanetPlaneMesh : MonoBehaviour
     }
     private void OffsetZ(ref Vector3[] vertices)
     {
+        var distanceCameraToPlane = (Camera.main.transform.position - transform.position).magnitude;
+        if(distanceCameraToPlane > zMax)
+        {
+            zValue = 0;
+        }
+        else if (distanceCameraToPlane < zMin)
+        {
+            zValue = 1;
+        }
+        else
+        {
+            zValue = - distanceCameraToPlane + zMax;
+
+        }
         for (int i = 0; i < vertices.Length; i++)
         {
             vertices[i] += new Vector3(0, 0, zValue - 0.75f);
@@ -126,19 +154,7 @@ public class PlanetPlaneMesh : MonoBehaviour
         for (int i = 0; i < vertices.Length; i++)
         {
             vertices[i] = (vertices[i] + currentForward * zValue).normalized;
-            vertices[i] = shapeGenerator.CalculatePointOnPlanet(vertices[i]);
+            vertices[i] = shapeGenerator.GetPointOnPlanet(vertices[i]);
         }
-    }
-
-
-    public void Update()
-    {
-        RecalculateMesh();
-    }
-
-    /// Editor functions:
-    public void OnShapeSettingsUpdated()
-    {
-        GeneratePlanet();
     }
 }

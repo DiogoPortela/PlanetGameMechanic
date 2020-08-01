@@ -17,7 +17,7 @@ public class PlanetIcosphereEditor : Editor
             base.OnInspectorGUI();
             if (check.changed)
             {
-                planet.GeneratePlanet();
+                //planet.GeneratePlanet();
             }
         }
 

@@ -80,7 +80,8 @@ public class TerrainFaceTriangle
 
         for (int i = 0; i < finalVertices.Length; i++)
         {
-            finalVertices[i] = shapeGenerator.CalculatePointOnPlanet(finalVertices[i]);
+            //finalVertices[i] = shapeGenerator.CalculatePointOnPlanet(finalVertices[i]);
+            finalVertices[i] = shapeGenerator.GetPointOnPlanet(finalVertices[i]);
         }
 
         mesh.Clear();

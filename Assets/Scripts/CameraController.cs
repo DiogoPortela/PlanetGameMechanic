@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using Utils;
 
-public class CameraController : MonoBehaviour
+public class CameraController : SingletonBehaviour<CameraController>
 {
     public float rotationSpeed = 50;
     public float zoomSpeed = 50;
@@ -11,12 +10,12 @@ public class CameraController : MonoBehaviour
     public KeyCode moveUp;
     public KeyCode moveDown;
 
-    public PlanetIcosphere focusedPlanet;
+    public PlanetPlaneMesh focusedPlanet;
 
     void Update()
     {
         float horizontalMove = (Input.GetKey(moveLeft) ? 1 : 0) + (Input.GetKey(moveRight) ? -1 : 0);
-        if(horizontalMove != 0)
+        if (horizontalMove != 0)
             this.transform.RotateAround(focusedPlanet.transform.position, Vector3.up, horizontalMove * rotationSpeed * Time.deltaTime);
 
         float verticalMove = (Input.GetKey(moveUp) ? 1 : 0) + (Input.GetKey(moveDown) ? -1 : 0);

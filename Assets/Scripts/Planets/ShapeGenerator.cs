@@ -1,46 +1,47 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 
+[Serializable]
 public class ShapeGenerator
 {
+    const int DATA_HEIGHT = 256;
+    const int DATA_WIDTH = 512;
+
+    PlanetData mapData;
     ShapeSettings settings;
-    INoiseFilter[] noiseFilters;
+
     public ShapeGenerator(ShapeSettings settings)
     {
         this.settings = settings;
-        this.noiseFilters = new INoiseFilter[settings.noiseLayers.Length];
-        for (int i = 0; i < noiseFilters.Length; i++)
-        {
-            noiseFilters[i] = NoiseFilterFactory.CreateNoiseFilter(settings.noiseLayers[i].noiseSettings);
-        }
+        GenerateMap();
     }
 
-    public Vector3 CalculatePointOnPlanet(Vector3 pointOnUnitSphere)
+    public void GenerateMap()
     {
-        pointOnUnitSphere.Normalize();
-
-        float firstLayerValue = 0;
-        float elevation = 0;
-
-        if(noiseFilters.Length > 0)
+        mapData = new PlanetData(DATA_WIDTH, DATA_HEIGHT);
+        foreach(var generator in settings.continentGenerators)
         {
-            firstLayerValue = noiseFilters[0].Evaluate(pointOnUnitSphere);
-            if (settings.noiseLayers[0].enabled)
-            {
-                elevation = firstLayerValue;
-            }
+            generator.Generate(ref mapData);
+        }
+    }
+    public Vector3 GetPointOnPlanet(Vector3 pointOnUnitySphere)
+    {
+        pointOnUnitySphere.Normalize();
+        var horizontalAngle = Vector3.SignedAngle(Vector3.forward, new Vector3(pointOnUnitySphere.x, 0, pointOnUnitySphere.z), Vector3.up);
+        var verticalAngle = Vector3.Angle(Vector3.down, new Vector3(pointOnUnitySphere.x, pointOnUnitySphere.y, pointOnUnitySphere.z));
+
+        if(horizontalAngle < 0)
+        {
+            horizontalAngle = 360 + horizontalAngle;
         }
 
-        for (int i = 0; i < noiseFilters.Length; i++)
-        {
-            if (settings.noiseLayers[i].enabled)
-            {
-                float mask = (settings.noiseLayers[i].useFirstLayerAsMask) ? firstLayerValue : 1;
-                elevation += noiseFilters[i].Evaluate(pointOnUnitSphere) * mask;
+        float horizontalScale = (DATA_WIDTH - 1) / 360.0f;
+        float verticalScale = (DATA_HEIGHT - 1) / 180.0f;
+        int pixelX = Mathf.RoundToInt(horizontalAngle * horizontalScale);
+        int pixelY = Mathf.RoundToInt(verticalAngle * verticalScale);
 
-            }
-        }
-        return pointOnUnitSphere * settings.planetRadius * (1 + elevation);
+        var height = mapData.GetHeight(pixelX, pixelY);
+
+        return pointOnUnitySphere + pointOnUnitySphere * height / 255.0f * 0.25f;
     }
 }
