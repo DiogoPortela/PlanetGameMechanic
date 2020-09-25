@@ -1,61 +1,62 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using UnityEditor;
 using UnityEngine;
-using UnityEditor;
 
-[CustomEditor(typeof(PlanetIcosphere))]
-public class PlanetIcosphereEditor : Editor
+namespace pt.dportela.PlanetGame.PlanetGeneration
 {
-    PlanetIcosphere planet;
-    Editor shapeEditor;
-    Editor colorEditor;
-
-    public override void OnInspectorGUI()
+    [CustomEditor(typeof(PlanetIcosphere))]
+    public class PlanetIcosphereEditor : Editor
     {
-        using (var check = new EditorGUI.ChangeCheckScope())
-        {
-            base.OnInspectorGUI();
-            if (check.changed)
-            {
-                //planet.GeneratePlanet();
-            }
-        }
+        PlanetIcosphere planet;
+        Editor shapeEditor;
+        Editor colorEditor;
 
-        if (GUILayout.Button("Generate Planet"))
+        public override void OnInspectorGUI()
         {
-            planet.GeneratePlanet();
-        }
-
-        DrawSettingsEditor(planet.shapeSettings, planet.OnShapeSettingsUpdated, ref planet.shapeSettingFoldout, ref shapeEditor);
-        DrawSettingsEditor(planet.colorSettings, planet.OnColorSettingsUpdated, ref planet.colorSettingFoldout, ref colorEditor);
-    }
-
-    void DrawSettingsEditor(Object settings, System.Action onSettingsUpdated, ref bool foldout, ref Editor editor)
-    {
-        if (settings != null)
-        {
-            foldout = EditorGUILayout.InspectorTitlebar(foldout, settings);
             using (var check = new EditorGUI.ChangeCheckScope())
             {
-                if (foldout)
+                base.OnInspectorGUI();
+                if (check.changed)
                 {
-                    CreateCachedEditor(settings, null, ref editor);
-                    editor.OnInspectorGUI();
+                    //planet.GeneratePlanet();
+                }
+            }
 
-                    if (check.changed)
+            if (GUILayout.Button("Generate Planet"))
+            {
+                planet.GeneratePlanet();
+            }
+
+            DrawSettingsEditor(planet.shapeSettings, planet.OnShapeSettingsUpdated, ref planet.shapeSettingFoldout, ref shapeEditor);
+            DrawSettingsEditor(planet.colorSettings, planet.OnColorSettingsUpdated, ref planet.colorSettingFoldout, ref colorEditor);
+        }
+
+        void DrawSettingsEditor(Object settings, System.Action onSettingsUpdated, ref bool foldout, ref Editor editor)
+        {
+            if (settings != null)
+            {
+                foldout = EditorGUILayout.InspectorTitlebar(foldout, settings);
+                using (var check = new EditorGUI.ChangeCheckScope())
+                {
+                    if (foldout)
                     {
-                        if (onSettingsUpdated != null)
+                        CreateCachedEditor(settings, null, ref editor);
+                        editor.OnInspectorGUI();
+
+                        if (check.changed)
                         {
-                            onSettingsUpdated();
+                            if (onSettingsUpdated != null)
+                            {
+                                onSettingsUpdated();
+                            }
                         }
                     }
                 }
             }
         }
-    }
 
-    private void OnEnable()
-    {
-        planet = (PlanetIcosphere)target;
+        private void OnEnable()
+        {
+            planet = (PlanetIcosphere)target;
+        }
     }
 }

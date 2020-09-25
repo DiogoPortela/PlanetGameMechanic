@@ -1,47 +1,50 @@
 ﻿using System;
 using UnityEngine;
 
-[Serializable]
-public class ShapeGenerator
+namespace pt.dportela.PlanetGame.PlanetGeneration
 {
-    const int DATA_HEIGHT = 256;
-    const int DATA_WIDTH = 512;
-
-    PlanetData mapData;
-    ShapeSettings settings;
-
-    public ShapeGenerator(ShapeSettings settings)
+    [Serializable]
+    public class ShapeGenerator
     {
-        this.settings = settings;
-        GenerateMap();
-    }
+        public const int DATA_WIDTH = 1024;
+        public const int DATA_HEIGHT = 512;
 
-    public void GenerateMap()
-    {
-        mapData = new PlanetData(DATA_WIDTH, DATA_HEIGHT);
-        foreach(var generator in settings.continentGenerators)
+        PlanetData mapData;
+        ShapeSettings settings;
+
+        public ShapeGenerator(ShapeSettings settings)
         {
-            generator.Generate(ref mapData);
-        }
-    }
-    public Vector3 GetPointOnPlanet(Vector3 pointOnUnitySphere)
-    {
-        pointOnUnitySphere.Normalize();
-        var horizontalAngle = Vector3.SignedAngle(Vector3.forward, new Vector3(pointOnUnitySphere.x, 0, pointOnUnitySphere.z), Vector3.up);
-        var verticalAngle = Vector3.Angle(Vector3.down, new Vector3(pointOnUnitySphere.x, pointOnUnitySphere.y, pointOnUnitySphere.z));
-
-        if(horizontalAngle < 0)
-        {
-            horizontalAngle = 360 + horizontalAngle;
+            this.settings = settings;
+            GenerateMap();
         }
 
-        float horizontalScale = (DATA_WIDTH - 1) / 360.0f;
-        float verticalScale = (DATA_HEIGHT - 1) / 180.0f;
-        int pixelX = Mathf.RoundToInt(horizontalAngle * horizontalScale);
-        int pixelY = Mathf.RoundToInt(verticalAngle * verticalScale);
+        public void GenerateMap()
+        {
+            mapData = new PlanetData(DATA_WIDTH, DATA_HEIGHT);
+            foreach (var generator in settings.continentGenerators)
+            {
+                mapData.AddContinent(generator.Generate());
+            }
+        }
+        public Vector3 GetPointOnPlanet(Vector3 pointOnUnitSphere)
+        {
+            pointOnUnitSphere.Normalize();
+            var horizontalAngle = Vector3.SignedAngle(Vector3.forward, new Vector3(pointOnUnitSphere.x, 0, pointOnUnitSphere.z), Vector3.up);
+            var verticalAngle = Vector3.Angle(Vector3.down, new Vector3(pointOnUnitSphere.x, pointOnUnitSphere.y, pointOnUnitSphere.z));
 
-        var height = mapData.GetHeight(pixelX, pixelY);
+            if (horizontalAngle < 0)
+            {
+                horizontalAngle = 360 + horizontalAngle;
+            }
 
-        return pointOnUnitySphere + pointOnUnitySphere * height / 255.0f * 0.25f;
+            float horizontalScale = (DATA_WIDTH - 1) / 360.0f;
+            float verticalScale = (DATA_HEIGHT - 1) / (180.0f - settings.polarAngle * 2);
+            int indexX = Mathf.RoundToInt(horizontalAngle * horizontalScale);
+            int indexY = Mathf.RoundToInt((verticalAngle - settings.polarAngle) * verticalScale);
+
+            var height = mapData.GetHeight(indexX, indexY);
+
+            return pointOnUnitSphere * settings.planetRadius + pointOnUnitSphere * height / 255.0f * settings.mountainMaxHeight;
+        }
     }
 }

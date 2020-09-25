@@ -1,9 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-[CreateAssetMenu()]
-public class ColorSettings : ScriptableObject
+namespace pt.dportela.PlanetGame.PlanetGeneration
 {
-    public Color planetColor;
+    public class ColorSettings : ScriptableObject
+    {
+        public Color planetColor;
+    }
 }

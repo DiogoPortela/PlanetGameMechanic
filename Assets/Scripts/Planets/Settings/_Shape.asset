@@ -13,8 +13,11 @@ MonoBehaviour:
   m_Name: _Shape
   m_EditorClassIdentifier: 
   planetRadius: 1
-  hasOcean: 1
+  isMoon: 0
+  mountainMaxHeight: 0.25
+  polarAngle: 40
   continentGenerators:
-  - size: 1
+  - widthScale: 1
+    heightScale: 1
     mainIslandsCount: 1
-    smallIslandsCount: 1
+    smallIslandsCount: 0

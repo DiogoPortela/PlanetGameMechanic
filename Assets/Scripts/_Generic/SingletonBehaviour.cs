@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Utils
+namespace pt.dportela.PlanetGame.Utils
 {
     public abstract class SingletonBehaviour<T> : MonoBehaviour where T : class
     {

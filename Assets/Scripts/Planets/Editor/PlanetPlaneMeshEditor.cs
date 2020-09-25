@@ -1,53 +1,52 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(PlanetPlaneMesh))]
-public class PlanetPlaneMeshEditor : Editor
+namespace pt.dportela.PlanetGame.PlanetGeneration
 {
-    PlanetPlaneMesh planet;
-    Editor shapeEditor;
-
-    public override void OnInspectorGUI()
+    [CustomEditor(typeof(PlanetPlaneMesh))]
+    public class PlanetPlaneMeshEditor : Editor
     {
-        using (var check = new EditorGUI.ChangeCheckScope())
-        {
-            base.OnInspectorGUI();
-            if (check.changed)
-            {
-                planet.GeneratePlanet();
-            }
-        }
+        PlanetPlaneMesh planet;
+        Editor shapeEditor;
 
-        DrawSettingsEditor(planet.shapeSettings, planet.OnShapeSettingsUpdated, ref planet.shapeSettingFoldout, ref shapeEditor);
-        //DrawSettingsEditor(planet.colorSettings, planet.OnColorSettingsUpdated, ref planet.colorSettingFoldout, ref colorEditor);
-    }
-
-    void DrawSettingsEditor(Object settings, System.Action onSettingsUpdated, ref bool foldout, ref Editor editor)
-    {
-        if (settings != null)
+        public override void OnInspectorGUI()
         {
-            foldout = EditorGUILayout.InspectorTitlebar(foldout, settings);
             using (var check = new EditorGUI.ChangeCheckScope())
             {
-                if (foldout)
+                base.OnInspectorGUI();
+                if (check.changed)
                 {
-                    CreateCachedEditor(settings, null, ref editor);
-                    editor.OnInspectorGUI();
+                    planet.GeneratePlanet();
+                }
+            }
 
-                    if (check.changed)
+            DrawSettingsEditor(planet.shapeSettings, planet.OnShapeSettingsUpdated, ref planet.shapeSettingFoldout, ref shapeEditor);
+        }
+
+        void DrawSettingsEditor(Object settings, System.Action onSettingsUpdated, ref bool foldout, ref Editor editor)
+        {
+            if (settings != null)
+            {
+                foldout = EditorGUILayout.InspectorTitlebar(foldout, settings);
+                using (var check = new EditorGUI.ChangeCheckScope())
+                {
+                    if (foldout)
                     {
-                        if (onSettingsUpdated != null)
+                        CreateCachedEditor(settings, null, ref editor);
+                        editor.OnInspectorGUI();
+
+                        if (check.changed)
                         {
-                            onSettingsUpdated();
+                            onSettingsUpdated?.Invoke();
                         }
                     }
                 }
             }
         }
-    }
 
-    private void OnEnable()
-    {
-        planet = (PlanetPlaneMesh)target;
+        private void OnEnable()
+        {
+            planet = (PlanetPlaneMesh)target;
+        }
     }
 }
