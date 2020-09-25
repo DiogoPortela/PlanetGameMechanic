@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace pt.dportela.PlanetGame.PlanetGeneration
 {
-
     public class TerrainFaceTriangle
     {
         ShapeGenerator shapeGenerator;

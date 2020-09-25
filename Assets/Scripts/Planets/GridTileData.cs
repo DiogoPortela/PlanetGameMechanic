@@ -2,10 +2,10 @@
 
 namespace pt.dportela.PlanetGame.PlanetGeneration
 {
-    internal class PlanetData
+    internal class GridTileData
     {
         [Serializable]
-        public class PixelData
+        public class TileData
         {
             public byte height;
             public BiomeType type;
@@ -13,31 +13,39 @@ namespace pt.dportela.PlanetGame.PlanetGeneration
         public enum BiomeType : byte
         {
             ocean = 0,
+            lake,
             beach,
             grass,
+            montain,
         }
 
         int width;
         int height;
-        PixelData[,] map;
+        internal TileData[,] map;
 
-        public PlanetData(int width, int height)
+        public GridTileData(int width, int height)
         {
-            map = new PixelData[width, height];
+            map = new TileData[width, height];
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
-                    map[x, y] = new PixelData();
+                    map[x, y] = new TileData();
                 }
             }
             this.width = width;
             this.height = height;
         }
 
-        public void AddContinent(PixelData[,] pixelData)
+        public void MergeGrid(GridTileData grid, int insertX = 0, int insertY = 0)
         {
-
+            for(int x = 0; x < grid.width; x++)
+            {
+                for(int y = 0; y < grid.height; y++)
+                {
+                    map[x, y] = grid.map[x, y];
+                }
+            }
         }
 
         public byte GetHeight(int coordinateX, int coordinateY)

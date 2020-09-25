@@ -7,23 +7,24 @@ namespace pt.dportela.PlanetGame.PlanetGeneration
     public class ShapeGenerator
     {
         public const int DATA_WIDTH = 1024;
-        public const int DATA_HEIGHT = 512;
+        public static int DATA_HEIGHT { get; private set; }
 
-        PlanetData mapData;
+        GridTileData worldData;
         ShapeSettings settings;
 
         public ShapeGenerator(ShapeSettings settings)
         {
             this.settings = settings;
-            GenerateMap();
+            DATA_HEIGHT = (int) (DATA_WIDTH / 2.0f *  (1 - (settings.polarAngle / 180f)));
+            Generate();
         }
 
-        public void GenerateMap()
+        public void Generate()
         {
-            mapData = new PlanetData(DATA_WIDTH, DATA_HEIGHT);
+            worldData = new GridTileData(DATA_WIDTH, DATA_HEIGHT);
             foreach (var generator in settings.continentGenerators)
             {
-                mapData.AddContinent(generator.Generate());
+                worldData.MergeGrid(generator.Generate());
             }
         }
         public Vector3 GetPointOnPlanet(Vector3 pointOnUnitSphere)
@@ -42,7 +43,7 @@ namespace pt.dportela.PlanetGame.PlanetGeneration
             int indexX = Mathf.RoundToInt(horizontalAngle * horizontalScale);
             int indexY = Mathf.RoundToInt((verticalAngle - settings.polarAngle) * verticalScale);
 
-            var height = mapData.GetHeight(indexX, indexY);
+            var height = worldData.GetHeight(indexX, indexY);
 
             return pointOnUnitSphere * settings.planetRadius + pointOnUnitSphere * height / 255.0f * settings.mountainMaxHeight;
         }
