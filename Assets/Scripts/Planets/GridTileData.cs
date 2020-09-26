@@ -19,8 +19,8 @@ namespace pt.dportela.PlanetGame.PlanetGeneration
             montain,
         }
 
-        int width;
-        int height;
+        internal int width;
+        internal int height;
         internal TileData[,] map;
 
         public GridTileData(int width, int height)
@@ -43,7 +43,7 @@ namespace pt.dportela.PlanetGame.PlanetGeneration
             {
                 for(int y = 0; y < grid.height; y++)
                 {
-                    map[x, y] = grid.map[x, y];
+                    map[x + insertX, y + insertY] = grid.map[x, y];
                 }
             }
         }

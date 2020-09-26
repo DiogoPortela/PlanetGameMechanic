@@ -14,13 +14,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   planetRadius: 1
   isMoon: 0
-  mountainMaxHeight: 0.05
-  polarAngle: 40
+  mountainMaxHeight: 0.1
+  polarAngle: 20
   continentGenerators:
-  - widthScale: 0.25
+  - seed: 1
+    widthScale: 0.5
     heightScale: 1
+    noiseScale: 60
     verticalOffset: 0
-    horizontaOffset: 0
-    mainIslandsCount: 1
-    smallIslandsCount: 0
+    horizontaOffset: 1
+    submergeOffset: 0
+    borderMaskFalloff: 2.5
+    debugTexture: {fileID: 0}
+  - seed: 2
+    widthScale: 0.5
+    heightScale: 1
+    noiseScale: 60
+    verticalOffset: 0
+    horizontaOffset: -1
+    submergeOffset: 0.3
+    borderMaskFalloff: 3
     debugTexture: {fileID: 0}
