@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace pt.dportela.PlanetGame.PlanetGeneration
 {
@@ -24,6 +25,10 @@ namespace pt.dportela.PlanetGame.PlanetGeneration
 
         private void Start()
         {
+
+            Camera c = Camera.main;
+            c.depthTextureMode = DepthTextureMode.Depth;
+
             InitializeMap();
             GenerateMap();
             UpdateMesh();
@@ -95,6 +100,7 @@ namespace pt.dportela.PlanetGame.PlanetGeneration
                 render.material = colorSettings.material;
             }
         }
+
     }
 }
 

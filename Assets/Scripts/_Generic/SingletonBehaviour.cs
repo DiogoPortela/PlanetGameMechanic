@@ -17,7 +17,7 @@ namespace pt.dportela.PlanetGame.Utils
             }
         }
 
-        protected void Awake()
+        protected virtual void Awake()
         {
             if (instance == null)
                 instance = this as T;
@@ -29,7 +29,7 @@ namespace pt.dportela.PlanetGame.Utils
             }
         }
 
-        protected void OnDestroy()
+        protected virtual void OnDestroy()
         {
             if(this as T == instance)
             {

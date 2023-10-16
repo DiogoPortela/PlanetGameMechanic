@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 998cbd98880079f4fa6006faddee3a34, type: 3}
   m_Name: debugMapShape
   m_EditorClassIdentifier: 
-  seed: 0
+  seed: 318282191
   planetBaseRadius: 1
-  mountainMaxHeight: 1
+  mountainMaxHeight: 0.2
   isMoon: 0

@@ -1,0 +1,88 @@
+{
+    "name": "defaultInput",
+    "maps": [
+        {
+            "name": "InGame",
+            "id": "f7e5a09d-bb59-4e2b-bdca-dd6da08a03c7",
+            "actions": [
+                {
+                    "name": "PanClick",
+                    "type": "Button",
+                    "id": "b09dd81e-74a0-4c91-bed7-ccac06cf4ddf",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "ZoomClick",
+                    "type": "Value",
+                    "id": "01b2bbd7-3619-44cc-88d5-e31dbddf22df",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "AlignVertical",
+                    "type": "Button",
+                    "id": "3dda0928-8645-40bc-97c0-1078c97ebd6b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "73002f9d-b24d-4897-92d2-57a0214410ca",
+                    "path": "<Mouse>/middleButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC",
+                    "action": "PanClick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "223894bb-8216-4ae1-9850-211024ae3769",
+                    "path": "<Keyboard>/c",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC",
+                    "action": "AlignVertical",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ba513a93-2b26-4366-a45a-7c8589e3d2fc",
+                    "path": "<Mouse>/scroll/y",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC",
+                    "action": "ZoomClick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": [
+        {
+            "name": "PC",
+            "bindingGroup": "PC",
+            "devices": [
+                {
+                    "devicePath": "<Keyboard>",
+                    "isOptional": false,
+                    "isOR": false
+                },
+                {
+                    "devicePath": "<Mouse>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        }
+    ]
+}
